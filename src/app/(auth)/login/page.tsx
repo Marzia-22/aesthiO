@@ -2,7 +2,12 @@ import { LoginForm } from "@/components/auth/login-form";
 import { GoogleButton } from "@/components/auth/google-button";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
   return (
     <div className="w-full max-w-sm animate-fade-in">
       {/* Logo */}
@@ -13,6 +18,11 @@ export default function LoginPage() {
         <p className="text-sm text-neutral-500 mt-1">
           Sign in to your account
         </p>
+        {error === "auth_callback_failed" && (
+          <p role="alert" className="mt-3 text-sm text-red-600">
+            Google sign-in could not complete. Please try again.
+          </p>
+        )}
       </div>
 
       {/* Card */}

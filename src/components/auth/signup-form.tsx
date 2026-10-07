@@ -20,23 +20,25 @@ export function SignupForm() {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: fullName },
-        emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/onboarding`,
-      },
-    });
-
-    if (error) {
-      setError(error.message);
+    try {
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: fullName },
+          emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/onboarding`,
+        },
+      });
+      if (signUpError) {
+        setError(signUpError.message);
+        return;
+      }
+      setSuccess(true);
+    } catch {
+      setError("Aesthio could not reach its authentication service. Check your connection and Supabase project configuration, then try again.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    setSuccess(true);
-    setLoading(false);
   };
 
   if (success) {

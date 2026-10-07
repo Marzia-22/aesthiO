@@ -18,16 +18,19 @@ export function LoginForm() {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      setError(error.message);
+    try {
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) {
+        setError(signInError.message);
+        return;
+      }
+      router.replace("/feed");
+      router.refresh();
+    } catch {
+      setError("Aesthio could not reach its authentication service. Check your connection and Supabase project configuration, then try again.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    router.push("/feed");
-    router.refresh();
   };
 
   return (
